@@ -3,9 +3,9 @@
 1. Daffa Zimraan Hasan (5025221223)
 2. Wardatul Amalia Safitri (5025211006)
 
-##Topologi
+## Topologi
 
-##Konfigurasi
+## Konfigurasi <br>
 Aura (DHCP Relay)
 ```
 auto eth0
