@@ -5,7 +5,78 @@
 
 ## Topologi
 
-## Konfigurasi <br>
+## Soal 0
+### Pertanyaan
+>Setelah mengalahkan Demon King, perjalanan berlanjut. Kali ini, kalian diminta untuk
+melakukan register domain berupa riegel.canyon.yyy.com untuk worker PHP dan
+granz.channel.yyy.com untuk worker Laravel (0) mengarah pada worker yang memiliki IP
+[prefix IP].x.1. Lakukan konfigurasi sesuai dengan peta yang sudah diberikan. (1)
+
+### Penyelesaian
+untuk melakukan register domain berupa riegel.canyon.e24.com untuk worker Laravel dan granz.channel.e24.com untuk worker PHP yang mengarah pada worker yang memiliki IP 192.218.x.1 dapat dilakukan dengan cara menambahkan script berikut ke `/etc/bind/named.conf.local` pada DNS Server.
+```
+echo 'zone "riegel.canyon.e24.com" {
+    type master;
+    file "/etc/bind/sites/riegel.canyon.e24.com";
+};
+
+zone "granz.channel.e24.com" {
+    type master;
+    file "/etc/bind/sites/granz.channel.e24.com";
+};' > /etc/bind/named.conf.local
+```
+Setelah itu kita buat directory baru yaitu `/etc/bind/jarkom` lalu membuat konfigurasi baru di `/etc/bind/jarkom/granz.channel.e24.com` dan `/etc/bind/jarkom/riegel.canyon.e24.com`.
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     riegel.canyon.e24.com. root.riegel.canyon.e24.com. (
+			2023110101	; Serial
+                        604800         ; Refresh
+                        86400         ; Retry
+                        2419200         ; Expire
+                        604800 )       ; Negative Cache TTL
+;
+@           IN      NS      riegel.canyon.e24.com.
+@           IN      A       192.218.4.1 ; 
+www         IN      CNAME   riegel.canyon.e24.com.
+```
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     granz.channel.e24.com. root.granz.channel.e24.com. (
+                            2023110101         ; Serial
+                        604800         ; Refresh
+                        86400         ; Retry
+                        2419200         ; Expire
+                        604800 )       ; Negative Cache TTL
+;
+@           IN      NS      granz.channel.e24.com.
+@           IN      A       192.218.3.1 ; 
+www         IN      CNAME   granz.channel.e24.com.
+```
+Setelah itu lakukan konfigurasi di `/etc/bind/named.conf.options`.
+```
+echo 'options {
+      directory "/var/cache/bind";
+
+      forwarders {
+              192.168.122.1;
+      };
+
+      // dnssec-validation auto;
+      allow-query{any;};
+      listen-on-v6 { any; };
+}; ' >/etc/bind/named.conf.options
+```
+
+## Soal 1
+>Lakukan konfigurasi sesuai dengan peta yang sudah diberikan
+
+### Konfigurasi Network
 Aura (DHCP Relay)
 ```
 auto eth0
@@ -135,74 +206,49 @@ auto eth0
 iface eth0 inet dhcp
 ```
 
-## Soal 1
-### Pertanyaan
->Setelah mengalahkan Demon King, perjalanan berlanjut. Kali ini, kalian diminta untuk
-melakukan register domain berupa riegel.canyon.yyy.com untuk worker PHP dan
-granz.channel.yyy.com untuk worker Laravel (0) mengarah pada worker yang memiliki IP
-[prefix IP].x.1. Lakukan konfigurasi sesuai dengan peta yang sudah diberikan. (1)
+### DHCP Server
+Pada Himmel (DHCP Server) buat konfigurasi untuk menetapkan ip static menggunakan konsep fixed address. Fixed address diberikan kepada worker PHP dan worker laravel
+```
+echo '
+host Lawine {
+    hardware ethernet 0a:65:f2:fc:cc:4b;
+    fixed-address 192.218.3.3;
+}
 
-### Penyelesaian
-untuk melakukan register domain berupa riegel.canyon.e24.com untuk worker Laravel dan granz.channel.e24.com untuk worker PHP yang mengarah pada worker yang memiliki IP 192.218.x.1 dapat dilakukan dengan cara menambahkan script berikut ke `/etc/bind/named.conf.local` pada DNS Server.
-```
-echo 'zone "riegel.canyon.e24.com" {
-    type master;
-    file "/etc/bind/sites/riegel.canyon.e24.com";
-};
+host Linie {
+    hardware ethernet da:1b:14:4a:db:af;
+    fixed-address 192.218.3.2;
+}
 
-zone "granz.channel.e24.com" {
-    type master;
-    file "/etc/bind/sites/granz.channel.e24.com";
-};' > /etc/bind/named.conf.local
-```
-Setelah itu kita buat directory baru yaitu `/etc/bind/jarkom` lalu membuat konfigurasi baru di `/etc/bind/jarkom/granz.channel.e24.com` dan `/etc/bind/jarkom/riegel.canyon.e24.com`.
-```
-;
-; BIND data file for local loopback interface
-;
-$TTL    604800
-@       IN      SOA     riegel.canyon.e24.com. root.riegel.canyon.e24.com. (
-			2023110101	; Serial
-                        604800         ; Refresh
-                        86400         ; Retry
-                        2419200         ; Expire
-                        604800 )       ; Negative Cache TTL
-;
-@           IN      NS      riegel.canyon.e24.com.
-@           IN      A       192.218.4.1 ; 
-www         IN      CNAME   riegel.canyon.e24.com.
-```
-```
-;
-; BIND data file for local loopback interface
-;
-$TTL    604800
-@       IN      SOA     granz.channel.e24.com. root.granz.channel.e24.com. (
-                            2023110101         ; Serial
-                        604800         ; Refresh
-                        86400         ; Retry
-                        2419200         ; Expire
-                        604800 )       ; Negative Cache TTL
-;
-@           IN      NS      granz.channel.e24.com.
-@           IN      A       192.218.3.1 ; 
-www         IN      CNAME   granz.channel.e24.com.
-```
-Setelah itu lakukan konfigurasi di `/etc/bind/named.conf.options`.
-```
-echo 'options {
-      directory "/var/cache/bind";
+host Lugner {
+    hardware ethernet 96:78:85:aa:ff:0c;
+    fixed-address 192.218.3.1;
+}
 
-      forwarders {
-              192.168.122.1;
-      };
+host Frieren {
+    hardware ethernet 12:36:43:eb:eb:a2;
+    fixed-address 192.218.4.3;
+}
 
-      // dnssec-validation auto;
-      allow-query{any;};
-      listen-on-v6 { any; };
-}; ' >/etc/bind/named.conf.options
+host Flamme {
+    hardware ethernet 86:dd:94:b6:c5:6a;
+    fixed-address 192.218.4.2;
+}
+
+host Fern {
+    hardware ethernet 86:3b:cb:30:7e:ac;
+    fixed-address 192.218.4.1;
+}
+' >> /etc/dhcp/dhcpd.conf
 ```
-
+Dengan demikian, pembagian IP address pada worker adalah sebagai berikut : </br>
+1) Lugner : 192.218.3.1
+2) Linie : 192.218.3.2
+3) Lawine : 192.218.3.3
+4) Fern : 192.218.4.1
+5) Flamme : 192.218.4.2
+6) Frieren : 192.218.4.3
+   
 ## Soal 2
 ### Pertanyaan
 >Semua CLIENT harus menggunakan konfigurasi dari DHCP Server. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
@@ -222,13 +268,7 @@ INTERFACESv6=' > /etc/default/isc-dhcp-server
 ```
 Setelah itu, lakukan konfigurasi pada `/etc/dhcp/dhcpd.conf` pada DHCP server.
 ```
-echo 'subnet 192.218.1.0 netmask 255.255.255.0 {
-}
-
-subnet 192.218.2.0 netmask 255.255.255.0 {
-}
-
-subnet 192.218.3.0 netmask 255.255.255.0 {
+echo 'subnet 192.218.3.0 netmask 255.255.255.0 {
     range 192.218.3.16 192.218.3.32;
     range 192.218.3.64 192.218.3.80;
     option routers 192.218.3.0;
@@ -244,7 +284,7 @@ subnet 192.218.3.0 netmask 255.255.255.0 {
 ### Penyelesaian
 Kita dapat menambahkan konfigurasi seperti soal no 2 di `/etc/dhcp/dhcpd.conf` pada DHCP server, kali ini melalui switch 4.
 ```
-subnet 192.218.4.0 netmask 255.255.255.0 {
+echo 'subnet 192.218.4.0 netmask 255.255.255.0 {
     range 192.218.4.12 192.218.4.20;
     range 192.218.4.160 192.218.4.168;
     option routers 192.218.4.0;
@@ -257,7 +297,7 @@ subnet 192.218.4.0 netmask 255.255.255.0 {
 >Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut
 
 ### Penyelesaian
-Untuk menyelesaikan ini kita perlu menambahkan konfigurasi berupa `option broadcast-address` dan `option domain-name-server` agar DNS dari Heiter dapat digunakan.
+Untuk menyelesaikan ini kita perlu menambahkan konfigurasi berupa `option domain-name-server` agar DNS dari Heiter dapat digunakan.
 ```
 echo 'subnet 192.218.1.0 netmask 255.255.255.0 {
 }
@@ -281,19 +321,18 @@ subnet 192.218.4.0 netmask 255.255.255.0 {
     option domain-name-servers 192.218.1.2;
 }' > /etc/dhcp/dhcpd.conf
 ```
-Langkah Berikutnya, menyiapkan setup untuk DHCP Relay terlebih dahulu sebagai berikut
+Selain itu, pada DNS Server (Hieter) tambahkan konfigurasi berikut agar ip client yang didapat dari dhcp server dapat terhubung dengan internet
 ```
-apt-get update
-apt-get install isc-dhcp-relay -y
+echo 'options {
+        directory "/var/cache/bind";
 
-echo '
-SERVERS="192.218.1.1"
-INTERFACES="eth1 eth2 eth3 eth4"
-OPTIONS=' > /etc/default/isc-dhcp-relay
-
-echo 'net.ipv4.ip_forward=1' > /etc/sysctl.conf
-
-service isc-dhcp-relay start
+        forwarders {
+                   192.168.122.1;
+          };
+        //dnssec-validation auto;
+        allow-query{ any; };
+        listen-on-v6 { any; };
+};' > /etc/bind/named.conf.options
 ```
 
 ## Soal 5
@@ -305,13 +344,7 @@ waktu maksimal yang dialokasikan untuk peminjaman alamat IP selama 96 menit
 ### Penyelesaian
 Untuk mengatur lama waktu DHCP server meminjamkan alamat IP kepada Client dapat dilakukan dengan cara menambahkan konfigurasi berupa `lease time` pada `/etc/dhcp/dhcpd.conf` pada DHCP server.
 ```
-echo 'subnet 192.218.1.0 netmask 255.255.255.0 {
-}
-
-subnet 192.218.2.0 netmask 255.255.255.0 {
-}
-
-subnet 192.218.3.0 netmask 255.255.255.0 {
+echo 'subnet 192.218.3.0 netmask 255.255.255.0 {
     range 192.218.3.16 192.218.3.32;
     range 192.218.3.64 192.218.3.80;
     option routers 192.218.3.0;
@@ -351,12 +384,12 @@ apt-get install htop -y
 service nginx start
 service php7.3-fpm start
 ```
-Setelah itu, silakan melakukan konfigurasi sebagai berikut.
+Setelah itu, clone project granz.channel.yyy.com dari link github yang sudah disiapkan sebelumnya dan masukkan folder hasil clone project ke dalam directory /var/www
 ```
 git clone https://github.com/wamalias/granz.channel.yyy.com.git
 mv granz.channel.yyy.com /var/www
 ```
-Lalu, lakukan konfigurasi pada `/etc/nginx/sites-available/granz.channel.yyy.com` pada masing-masing PHP Worker
+Lalu, lakukan konfigurasi deployment pada `/etc/nginx/sites-available/granz.channel.yyy.com` pada masing-masing PHP Worker
 ```
 server {
         listen 80;
@@ -382,13 +415,39 @@ server {
 }
 ```
 
+
 ## Soal 7
 ### Pertanyaan
 >Kepala suku dari Bredt Region memberikan resource server sebagai berikut:</br>a. Lawine, 4GB, 2vCPU, dan 80 GB SSD.</br>b. Linie, 2GB, 2vCPU, dan 50 GB SSD.</br>c. Lugner 1GB, 1vCPU, dan 25 GB SSD.</br>aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000
 request dan 100 request/second.
 
 ### Penyelesaian
+Pembagian resources di atas akan mempengaruhi pembagian beban kerja dari masing-masing worker. Untuk menghitung total weight masing-masing node, maka nilai resources yang diberikan harus dikalikan semuanya. Tambahkan keterangan weight ini pada konfigurasi load balancer (Eisen)
+```
+echo '
+upstream backend  {
+server 192.218.3.1 weight=25; #IP Lugner
+server 192.218.3.2 weight=200; #IP Linie
+server 192.218.3.3 weight=640; #IP Lawine
+}
 
+server {
+listen 80;
+server_name _;
+
+        location / {
+                proxy_pass http://backend;
+                proxy_set_header    X-Real-IP $remote_addr;
+                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header    Host $http_host;
+	}
+error_log /var/log/nginx/lb_error.log;
+access_log /var/log/nginx/lb_access.log;
+
+}
+' > /etc/nginx/sites-available/lb-jarkom
+```
+Berikut adalah hasil testing dengan 1000 request dan 100 request/second
 
 ## Soal 8
 ### Pertanyaan
@@ -401,6 +460,76 @@ c. Grafik request per second untuk masing masing algoritma.
 d. Analisis
 
 ### Penyelesaian
+Untuk melakukan testing dengan Apache Benchmark, kami munggunakan syntax request sebagai berikut
+```
+ab -n 200 -c 10 http://granz.channel.e24.com/ 
+```
+Dalam soal ini kami menggunakan 5 algoritma dengan penjelasan sebagai berikut.
+
+#### a. Round Robin
+Untuk algoritma round robin, konfigurasi upstream backend pada load balancer adalah sebagai berikut
+```
+echo '
+upstream backend  {
+server 192.218.3.1; #IP Lugner
+server 192.218.3.2; #IP Linie
+server 192.218.3.3; #IP Lawine
+}
+```
+Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut
+
+#### b. Weighted Round Robin
+Untuk algoritma weighted round robin, konfigurasi upstream backend pada load balancer adalah sebagai berikut
+```
+echo '
+upstream backend  {
+server 192.218.3.1 weight=25; #IP Lugner
+server 192.218.3.2 weight=200; #IP Linie
+server 192.218.3.3 weight=640; #IP Lawine
+}
+```
+Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut
+
+#### c. Least Connection
+Untuk algoritma least connection, konfigurasi upstream backend pada load balancer adalah sebagai berikut
+```
+echo '
+upstream backend  {
+least_conn;
+server 192.218.3.1; #IP Lugner
+server 192.218.3.2; #IP Linie
+server 192.218.3.3; #IP Lawine
+}
+```
+Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut
+
+#### d. IP Hash
+Untuk algoritma IP Hash, konfigurasi upstream backend pada load balancer adalah sebagai berikut
+```
+echo '
+upstream backend  {
+ip_hash;
+server 192.218.3.1; #IP Lugner
+server 192.218.3.2; #IP Linie
+server 192.218.3.3; #IP Lawine
+}
+```
+Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut
+
+#### e. Generic Hash
+Untuk algoritma generic hash, konfigurasi upstream backend pada load balancer adalah sebagai berikut
+```
+echo '
+upstream backend  {
+hash $request_uri consistent;
+server 192.218.3.1; #IP Lugner
+server 192.218.3.2; #IP Linie
+server 192.218.3.3; #IP Lawine
+}
+```
+Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut </br>
+
+Dengan hasil seperti ini, maka Weighted Round Robin adalah algoritma load balancing yang paling efisien. Algoritma ini menyelesaikan tugas lebih cepat apabila dibandingkan dengan algoritma yang lain.
 
 ## Soal 9
 ### Pertanyaan
@@ -409,6 +538,13 @@ worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second,
 kemudian tambahkan grafiknya pada grimoire.
 
 ### Penyelesaian
+Pertama-tama, setting metode pembagian beban kerja pada load balancer menggunakan algoritma round robin. Kemudian lakukan testing dengan perintah berikut
+```
+ab -n 100 -c 10 http://granz.channel.e24.com/ 
+```
+Untuk testing pertama menggunakan 3 worker dan hasilnya adalah sebagai berikut </br>
+Untuk testing kedua, salah satu worker dimatikan, sehingga hanya menyisakan 2 worker yang aktif. Hasil dari menggunakan 2 worker adalah sebagai berikut </br>
+Untuk testing yang ketiga, matikan satu worker lagi. Sehingga hanya 1 worker yang aktif. Hasilnya adalah sebagai berikut
 
 ## Soal 10
 ### Pertanyaan
@@ -417,6 +553,36 @@ username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kel
 Terakhir taruh file “htpasswd” nya di /etc/nginx/rahasisakita/
 
 ### Penyelesaian
+Untuk membuat kombinasi username dan password, maka tambahkan perintah ini pada Eisen (Load Balancer)
+```
+mkdir -p /etc/nginx/rahasisakita/
+htpasswd -bc /etc/nginx/rahasisakita/.htpasswd netics ajke24
+```
+Untuk menerapkan autentikasi di load balancer, maka tambahkan konfigurasi `auth_basic "Restricted"` pada Eisen (Load Balancer) dan tambahkan `auth_basic_user_file` yang mengarah ke `htpasswd` yang sudah dibuat sebelumnya
+```
+server {
+listen 80;
+server_name _;
+
+        location / {
+                proxy_pass http://backend;
+                proxy_set_header    X-Real-IP $remote_addr;
+                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header    Host $http_host;
+
+                auth_basic "Restricted";
+                auth_basic_user_file /etc/nginx/rahasisakita/.htpasswd;
+	}
+
+	location ~ /\.ht {
+                deny all;
+        }
+error_log /var/log/nginx/lb_error.log;
+access_log /var/log/nginx/lb_access.log;
+
+}
+' > /etc/nginx/sites-available/lb-jarkom
+```
 
 ## Soal 11
 ### Pertanyaan
@@ -424,6 +590,36 @@ Terakhir taruh file “htpasswd” nya di /etc/nginx/rahasisakita/
 halaman https://www.its.ac.id. (11) hint: (proxy_pass)
 
 ### Penyelesaian
+Untuk mengarahkan request yang mengandung /its ke https://www.its.com, maka perlu menambahkan konfigurasi `location /its` sehingga konfigurasi server pada Eisen adalah sebagai berikut
+```
+server {
+listen 80;
+server_name _;
+
+        location / {
+                proxy_pass http://backend;
+                proxy_set_header    X-Real-IP $remote_addr;
+                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header    Host $http_host;
+
+                auth_basic "Restricted";
+                auth_basic_user_file /etc/nginx/rahasisakita/.htpasswd;
+	}
+
+ 	location /its {
+                proxy_pass https://www.its.ac.id;
+        }
+
+	location ~ /\.ht {
+                deny all;
+        }
+error_log /var/log/nginx/lb_error.log;
+access_log /var/log/nginx/lb_access.log;
+
+}
+' > /etc/nginx/sites-available/lb-jarkom
+```
+Disini kami mencoba memasukkan perintah `lynx 192.218.2.2/its` untuk testing, dan hasilnya adalah sebagai berikut
 
 ## Soal 12
 ### Pertanyaan
@@ -431,6 +627,41 @@ halaman https://www.its.ac.id. (11) hint: (proxy_pass)
 IP.3.70], [Prefix IP.4.167], dan [Prefix IP.4.168],
 
 ### Penyelesaian
+Tambahkan konfigurasi `allow IP address` dengan IP address yang diizinkan untuk akses load balancer dan `deny all` untuk block selain yang diizinkan.
+```
+server {
+listen 80;
+server_name _;
+
+        location / {
+                proxy_pass http://backend;
+                proxy_set_header    X-Real-IP $remote_addr;
+                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header    Host $http_host;
+
+                auth_basic "Restricted";
+                auth_basic_user_file /etc/nginx/rahasisakita/.htpasswd;
+
+		allow 192.218.3.69;
+                allow 192.218.3.70;
+                allow 192.218.4.167;
+                allow 192.218.4.168;
+                deny all;
+	}
+
+ 	location /its {
+                proxy_pass https://www.its.ac.id;
+        }
+
+	location ~ /\.ht {
+                deny all;
+        }
+error_log /var/log/nginx/lb_error.log;
+access_log /var/log/nginx/lb_access.log;
+
+}
+' > /etc/nginx/sites-available/lb-jarkom
+```
 
 ## Soal 13
 ### Pertanyaan
@@ -440,6 +671,37 @@ Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frie
 Flamme, dan Fern.
 
 ### Penyelesaian
+Mula-mula lakukan instalasi mariadb-server pada Denken (Database Server)
+```
+apt-get update && apt-get install mariadb-server -y
+```
+
+Kemudian, tambahkna konfigurasi berikut pada Denken untuk membuat user sql
+```
+echo '#!/bin/bash
+
+# MySQL connection parameters
+MYSQL_USER="root"
+MYSQL_PASSWORD=""
+# MySQL commands
+mysql -u$MYSQL_USER -p$MYSQL_PASSWORD <<EOF
+CREATE USER '\''kelompokE24'\''@'\''%'\'' IDENTIFIED BY '\''passwordE24'\'';
+CREATE USER '\''kelompokE24'\''@'\''localhost'\'' IDENTIFIED BY '\''passwordE24'\'';
+CREATE DATABASE dbkelompokE24;
+GRANT ALL PRIVILEGES ON *.* TO '\''kelompokE24'\''@'\''%'\'';
+GRANT ALL PRIVILEGES ON *.* TO '\''kelompokE24'\''@'\''localhost'\'';
+FLUSH PRIVILEGES;
+EOF' > /run.sh
+chmod +x /run.sh
+./run.sh
+```
+
+dan tambahkan konfigurasi berikut pada `/etc/mysql/my.cnf`
+```
+echo '[mysqld]
+skip-networking=0
+skip-bind-address' >> /etc/mysql/my.cnf
+```
 
 ## Soal 14
 ### Pertanyaan
