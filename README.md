@@ -547,7 +547,7 @@ server 192.218.3.3; #IP Lawine
 Dengan hasil seperti ini, maka Weighted Round Robin adalah algoritma load balancing yang paling efisien. Algoritma ini menyelesaikan tugas lebih cepat apabila dibandingkan dengan algoritma yang lain.
 
 Untuk hasil dan laporan lebih lengkap mengenai analisis hasil testing masing masing algoritma load balancing dapat dilihat melalui grimoire kelompok kami yang dapat diakses melalui link berikut:
-`https://docs.google.com/document/d/1ZhnPpZgizcKKo7t1i1oUybjh22J1jO-mBT2Hj5OpKWA/edit?usp=sharing`
+```https://docs.google.com/document/d/1ZhnPpZgizcKKo7t1i1oUybjh22J1jO-mBT2Hj5OpKWA/edit?usp=sharing```
 
 ## Soal 9
 ### Pertanyaan
@@ -561,7 +561,7 @@ Pertama-tama, setting metode pembagian beban kerja pada load balancer menggunaka
 ab -n 100 -c 10 http://granz.channel.e24.com/ 
 ```
 Untuk hasil dan laporan lebih lengkap mengenai analisis hasil testing masing masing untuk 3 worker, 2 worker, dan 1 worker dapat dilihat melalui grimoire kelompok kami yang dapat diakses melalui link berikut:
-`https://docs.google.com/document/d/1ZhnPpZgizcKKo7t1i1oUybjh22J1jO-mBT2Hj5OpKWA/edit?usp=sharing`
+```https://docs.google.com/document/d/1ZhnPpZgizcKKo7t1i1oUybjh22J1jO-mBT2Hj5OpKWA/edit?usp=sharing```
 
 ## Soal 10
 ### Pertanyaan
