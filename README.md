@@ -214,6 +214,12 @@ echo 'nameserver 192.168.122.2' > /etc/resolv.conf
 apt-get update -y
 apt install isc-dhcp-server -y
 ```
+Setelah selesai melakukan setup pada DHCP server kemudian, setup **INTERFACESv4** menuju eth0 melalui `/etc/default/isc-dhcp-server`
+```
+echo '
+INTERFACESv4="eth0"
+INTERFACESv6=' > /etc/default/isc-dhcp-server
+```
 Setelah itu, lakukan konfigurasi pada `/etc/dhcp/dhcpd.conf` pada DHCP server.
 ```
 echo 'subnet 192.218.1.0 netmask 255.255.255.0 {
@@ -275,6 +281,20 @@ subnet 192.218.4.0 netmask 255.255.255.0 {
     option domain-name-servers 192.218.1.2;
 }' > /etc/dhcp/dhcpd.conf
 ```
+Langkah Berikutnya, menyiapkan setup untuk DHCP Relay terlebih dahulu sebagai berikut
+```
+apt-get update
+apt-get install isc-dhcp-relay -y
+
+echo '
+SERVERS="192.218.1.1"
+INTERFACES="eth1 eth2 eth3 eth4"
+OPTIONS=' > /etc/default/isc-dhcp-relay
+
+echo 'net.ipv4.ip_forward=1' > /etc/sysctl.conf
+
+service isc-dhcp-relay start
+```
 
 ## Soal 5
 ### Pertanyaan
@@ -317,18 +337,54 @@ subnet 192.218.4.0 netmask 255.255.255.0 {
 Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut
 dengan menggunakan php 7.4.
 
-
-
 ### Penyelesaian
+Lakukan setup terlebih dahulu pada masing-masing PHP Worker sebagai berikut.
+```
+echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+echo 'nameserver 192.218.1.2' >> /etc/resolv.conf
+apt-get update
+apt-get install nginx -y
+apt-get install git -y
+apt-get install php7.3 php7.3-fpm -y
+apt-get install htop -y
 
+service nginx start
+service php7.3-fpm start
+```
+Setelah itu, silakan melakukan konfigurasi sebagai berikut.
+```
+git clone https://github.com/wamalias/granz.channel.yyy.com.git
+mv granz.channel.yyy.com /var/www
+```
+Lalu, lakukan konfigurasi pada `/etc/nginx/sites-available/granz.channel.yyy.com` pada masing-masing PHP Worker
+```
+server {
+        listen 80;
+        root /var/www/granz.channel.yyy.com;
+        index index.php index.html index.htm;
+	server_name granz.channel.e24.com;
+
+        location / {
+                try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+        }
+
+	location ~ /\.ht {
+            deny_all;
+        }
+
+	error_log /var/log/nginx/jarkom_error.log;
+	access_log /var/log/nginx/jarkom_access.log;
+}
+```
 
 ## Soal 7
 ### Pertanyaan
->Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
-a. Lawine, 4GB, 2vCPU, dan 80 GB SSD.
-b. Linie, 2GB, 2vCPU, dan 50 GB SSD.
-c. Lugner 1GB, 1vCPU, dan 25 GB SSD.
-aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000
+>Kepala suku dari Bredt Region memberikan resource server sebagai berikut:</br>a. Lawine, 4GB, 2vCPU, dan 80 GB SSD.</br>b. Linie, 2GB, 2vCPU, dan 50 GB SSD.</br>c. Lugner 1GB, 1vCPU, dan 25 GB SSD.</br>aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000
 request dan 100 request/second.
 
 ### Penyelesaian
