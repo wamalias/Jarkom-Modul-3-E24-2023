@@ -135,46 +135,146 @@ auto eth0
 iface eth0 inet dhcp
 ```
 
-## Soal 0
+## Soal 1
 ### Pertanyaan
 >Setelah mengalahkan Demon King, perjalanan berlanjut. Kali ini, kalian diminta untuk
 melakukan register domain berupa riegel.canyon.yyy.com untuk worker PHP dan
 granz.channel.yyy.com untuk worker Laravel (0) mengarah pada worker yang memiliki IP
-[prefix IP].x.1.
+[prefix IP].x.1. Lakukan konfigurasi sesuai dengan peta yang sudah diberikan. (1)
 
 ### Penyelesaian
-## Soal 1
-### Pertanyaan
->Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
+untuk melakukan register domain berupa riegel.canyon.e24.com untuk worker Laravel dan granz.channel.e24.com untuk worker PHP yang mengarah pada worker yang memiliki IP 192.218.x.1 dapat dilakukan dengan cara menambahkan script berikut ke `/etc/bind/named.conf.local` pada DNS Server.
+```
+echo 'zone "riegel.canyon.e24.com" {
+    type master;
+    file "/etc/bind/sites/riegel.canyon.e24.com";
+};
 
-### Penyelesaian
+zone "granz.channel.e24.com" {
+    type master;
+    file "/etc/bind/sites/granz.channel.e24.com";
+};' > /etc/bind/named.conf.local
+```
+Setelah itu kita buat directory baru yaitu `/etc/bind/jarkom` lalu membuat konfigurasi baru di `/etc/bind/jarkom/granz.channel.e24.com` dan `/etc/bind/jarkom/riegel.canyon.e24.com`.
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     riegel.canyon.e24.com. root.riegel.canyon.e24.com. (
+			2023110101	; Serial
+                        604800         ; Refresh
+                        86400         ; Retry
+                        2419200         ; Expire
+                        604800 )       ; Negative Cache TTL
+;
+@           IN      NS      riegel.canyon.e24.com.
+@           IN      A       192.218.4.1 ; 
+www         IN      CNAME   riegel.canyon.e24.com.
+```
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     granz.channel.e24.com. root.granz.channel.e24.com. (
+                            2023110101         ; Serial
+                        604800         ; Refresh
+                        86400         ; Retry
+                        2419200         ; Expire
+                        604800 )       ; Negative Cache TTL
+;
+@           IN      NS      granz.channel.e24.com.
+@           IN      A       192.218.3.1 ; 
+www         IN      CNAME   granz.channel.e24.com.
+```
+Setelah itu lakukan konfigurasi di `/etc/bind/named.conf.options`.
+```
+echo 'options {
+      directory "/var/cache/bind";
 
+      forwarders {
+              192.168.122.1;
+      };
+
+      // dnssec-validation auto;
+      allow-query{any;};
+      listen-on-v6 { any; };
+}; ' >/etc/bind/named.conf.options
+```
 
 ## Soal 2
 ### Pertanyaan
->Karena masih banyak spell yang harus dikumpulkan, bantulah para petualang untuk
-memenuhi kriteria berikut:<br/>
-1. Semua CLIENT harus menggunakan konfigurasi dari DHCP Server.
-2. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32
-dan [prefix IP].3.64 - [prefix IP].3.80
+>Semua CLIENT harus menggunakan konfigurasi dari DHCP Server. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
 
 ### Penyelesaian
+Untuk menyelesaikan ini, pertama-tama kita perlu melakukan setup pada DHCP Server terlebih dahulu.
+```
+echo 'nameserver 192.168.122.2' > /etc/resolv.conf    
+apt-get update -y
+apt install isc-dhcp-server -y
+```
+Setelah itu, lakukan konfigurasi pada `/etc/dhcp/dhcpd.conf` pada DHCP server.
+```
+echo 'subnet 192.218.1.0 netmask 255.255.255.0 {
+}
+
+subnet 192.218.2.0 netmask 255.255.255.0 {
+}
+
+subnet 192.218.3.0 netmask 255.255.255.0 {
+    range 192.218.3.16 192.218.3.32;
+    range 192.218.3.64 192.218.3.80;
+    option routers 192.218.3.0;
+}' > /etc/dhcp/dhcpd.conf
+```
+
 
 
 ## Soal 3
 ### Pertanyaan
->Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20
-dan [prefix IP].4.160 - [prefix IP].4.168
+>Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168
 
 ### Penyelesaian
+Kita dapat menambahkan konfigurasi seperti soal no 2 di `/etc/dhcp/dhcpd.conf` pada DHCP server, kali ini melalui switch 4.
+```
+subnet 192.218.4.0 netmask 255.255.255.0 {
+    range 192.218.4.12 192.218.4.20;
+    range 192.218.4.160 192.218.4.168;
+    option routers 192.218.4.0;
+}' > /etc/dhcp/dhcpd.conf
+```
 
 
 ## Soal 4
 ### Pertanyaan
->Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS
-tersebut
+>Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut
 
 ### Penyelesaian
+Untuk menyelesaikan ini kita perlu menambahkan konfigurasi berupa `option broadcast-address` dan `option domain-name-server` agar DNS dari Heiter dapat digunakan.
+```
+echo 'subnet 192.218.1.0 netmask 255.255.255.0 {
+}
+
+subnet 192.218.2.0 netmask 255.255.255.0 {
+}
+
+subnet 192.218.3.0 netmask 255.255.255.0 {
+    range 192.218.3.16 192.218.3.32;
+    range 192.218.3.64 192.218.3.80;
+    option routers 192.218.3.0;
+    option broadcast-address 192.218.3.255;
+    option domain-name-servers 192.218.1.2;
+}
+
+subnet 192.218.4.0 netmask 255.255.255.0 {
+    range 192.218.4.12 192.218.4.20;
+    range 192.218.4.160 192.218.4.168;
+    option routers 192.218.4.0;
+    option broadcast-address 192.218.4.255;
+    option domain-name-servers 192.218.1.2;
+}' > /etc/dhcp/dhcpd.conf
+```
 
 ## Soal 5
 ### Pertanyaan
@@ -183,7 +283,34 @@ selama 3 menit sedangkan pada client yang melalui Switch4 selama 12 menit. Denga
 waktu maksimal yang dialokasikan untuk peminjaman alamat IP selama 96 menit
 
 ### Penyelesaian
+Untuk mengatur lama waktu DHCP server meminjamkan alamat IP kepada Client dapat dilakukan dengan cara menambahkan konfigurasi berupa `lease time` pada `/etc/dhcp/dhcpd.conf` pada DHCP server.
+```
+echo 'subnet 192.218.1.0 netmask 255.255.255.0 {
+}
 
+subnet 192.218.2.0 netmask 255.255.255.0 {
+}
+
+subnet 192.218.3.0 netmask 255.255.255.0 {
+    range 192.218.3.16 192.218.3.32;
+    range 192.218.3.64 192.218.3.80;
+    option routers 192.218.3.0;
+    option broadcast-address 192.218.3.255;
+    option domain-name-servers 192.218.1.2;
+    default-lease-time 180;
+    max-lease-time 5760;
+}
+
+subnet 192.218.4.0 netmask 255.255.255.0 {
+    range 192.218.4.12 192.218.4.20;
+    range 192.218.4.160 192.218.4.168;
+    option routers 192.218.4.0;
+    option broadcast-address 192.218.4.255;
+    option domain-name-servers 192.218.1.2;
+    default-lease-time 720;
+    max-lease-time 5760;
+}' > /etc/dhcp/dhcpd.conf
+```
 ## Soal 6
 ### Pertanyaan
 >Berjalannya waktu, petualang diminta untuk melakukan deployment.
