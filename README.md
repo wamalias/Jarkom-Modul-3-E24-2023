@@ -42,7 +42,7 @@ iface eth0 inet static
 	gateway 192.218.1.0
 ```
 
-Heiter
+Heiter (DNS Server)
 ```
 auto eth0
 iface eth0 inet static
@@ -68,12 +68,72 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.218.2.0
 ```
-Frieren
-Flamme
-Fern
-Lawine
-Linie
-Lugner
+
+Fern (Laravel Worker)
+```
+auto eth0
+iface eth0 inet dhcp
+hwaddress ether 86:3b:cb:30:7e:ac
+```
+
+Flamme (Laravel Worker)
+```
+auto eth0
+iface eth0 inet dhcp
+hwaddress ether 86:dd:94:b6:c5:6a
+```
+
+Frieren (Laravel Worker)
+```
+auto eth0
+iface eth0 inet dhcp
+hwaddress ether 12:36:43:eb:eb:a2
+```
+
+Lugner (PHP Worker)
+```
+auto eth0
+iface eth0 inet dhcp
+hwaddress ether 96:78:85:aa:ff:0c
+```
+
+Linie (PHP Worker)
+```
+auto eth0
+iface eth0 inet dhcp
+hwaddress ether da:1b:14:4a:db:af
+```
+
+Lawine (PHP Worker)
+```
+auto eth0
+iface eth0 inet dhcp
+hwaddress ether 0a:65:f2:fc:cc:4b
+```
+
+Richter (Client)
+```
+auto eth0
+iface eth0 inet dhcp
+```
+
+Revolte (Client)
+```
+auto eth0
+iface eth0 inet dhcp
+```
+
+Stark (Client)
+```
+auto eth0
+iface eth0 inet dhcp
+```
+
+Sein (Client)
+```
+auto eth0
+iface eth0 inet dhcp
+```
 
 ## Soal 0
 ### Pertanyaan
@@ -93,7 +153,7 @@ granz.channel.yyy.com untuk worker Laravel (0) mengarah pada worker yang memilik
 ## Soal 2
 ### Pertanyaan
 >Karena masih banyak spell yang harus dikumpulkan, bantulah para petualang untuk
-memenuhi kriteria berikut.:
+memenuhi kriteria berikut:<br/>
 1. Semua CLIENT harus menggunakan konfigurasi dari DHCP Server.
 2. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32
 dan [prefix IP].3.64 - [prefix IP].3.80
