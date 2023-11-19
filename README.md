@@ -4,6 +4,7 @@
 2. Wardatul Amalia Safitri (5025211006)
 
 ## Topologi
+![topologi](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/topologi.jpg)</br>
 
 ## Soal 0
 ### Pertanyaan
@@ -334,6 +335,9 @@ echo 'options {
         listen-on-v6 { any; };
 };' > /etc/bind/named.conf.options
 ```
+berikut hasilnya di salah satu client:
+![4a](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/4a.jpg)</br>
+![4b](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/4b.jpg)</br>
 
 ## Soal 5
 ### Pertanyaan
@@ -364,6 +368,10 @@ subnet 192.218.4.0 netmask 255.255.255.0 {
     max-lease-time 5760;
 }' > /etc/dhcp/dhcpd.conf
 ```
+Setelah itu, kita bisa mengecek apakah lama waktu DHCP server untuk meminjamkan alamat IP kepada Client yang melalui Switch3 dan switch4 sudah berubah atau belum dengan cara melihat salah satu client di masing-masing switch.
+![5a](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/5a.jpg)</br>
+![5b](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/5b.jpg)</br>
+
 ## Soal 6
 ### Pertanyaan
 >Berjalannya waktu, petualang diminta untuk melakukan deployment.
@@ -414,6 +422,8 @@ server {
 	access_log /var/log/nginx/jarkom_access.log;
 }
 ```
+Lakukan uji pada client dengan menjalankan command `lynx 192.218.3.x` untuk setiap PHP Worker.
+![6](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6.jpg)</br>
 
 
 ## Soal 7
@@ -447,7 +457,10 @@ access_log /var/log/nginx/lb_access.log;
 }
 ' > /etc/nginx/sites-available/lb-jarkom
 ```
+Kemudian jalankan perintah berikut pada salah satu client `ab -n 1000 -c 100 http://www.granz.channel.e24.com/`
 Berikut adalah hasil testing dengan 1000 request dan 100 request/second
+![7a](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/7a.jpg)</br>
+![7b](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/7b.jpg)</br>
 
 ## Soal 8
 ### Pertanyaan
