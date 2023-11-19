@@ -424,13 +424,13 @@ server {
 	access_log /var/log/nginx/jarkom_access.log;
 }
 ```
-Lakukan uji pada client dengan menjalankan command `lynx 192.218.3.x` untuk setiap PHP Worker.
+Lakukan uji pada client dengan menjalankan command `lynx 192.218.3.x` untuk setiap PHP Worker.</br>
 Lugner
 ![6-lugner](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-lugner.png)</br>
 Linie
 ![6-linie](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-linie.png)</br>
 Lawine
-![6-lemme](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-lemme.png)</br>
+![6-lawine](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-lemme.png)</br>
 
 
 
