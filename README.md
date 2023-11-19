@@ -430,7 +430,7 @@ Lugner
 Linie
 ![6-linie](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-linie.png)</br>
 Lawine
-![6-lawine](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-lemme.png)</br>
+![6-lawine](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-lawine.png)</br>
 
 
 
@@ -497,7 +497,6 @@ server 192.218.3.2; #IP Linie
 server 192.218.3.3; #IP Lawine
 }
 ```
-Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut
 
 #### b. Weighted Round Robin
 Untuk algoritma weighted round robin, konfigurasi upstream backend pada load balancer adalah sebagai berikut
@@ -509,7 +508,6 @@ server 192.218.3.2 weight=200; #IP Linie
 server 192.218.3.3 weight=640; #IP Lawine
 }
 ```
-Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut
 
 #### c. Least Connection
 Untuk algoritma least connection, konfigurasi upstream backend pada load balancer adalah sebagai berikut
@@ -522,7 +520,6 @@ server 192.218.3.2; #IP Linie
 server 192.218.3.3; #IP Lawine
 }
 ```
-Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut
 
 #### d. IP Hash
 Untuk algoritma IP Hash, konfigurasi upstream backend pada load balancer adalah sebagai berikut
@@ -535,7 +532,6 @@ server 192.218.3.2; #IP Linie
 server 192.218.3.3; #IP Lawine
 }
 ```
-Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut
 
 #### e. Generic Hash
 Untuk algoritma generic hash, konfigurasi upstream backend pada load balancer adalah sebagai berikut
@@ -548,9 +544,10 @@ server 192.218.3.2; #IP Linie
 server 192.218.3.3; #IP Lawine
 }
 ```
-Dan ketika dilakukan testing dengan 200 request dan 10 request/second, hasilnya adalah sebagai berikut </br>
-
 Dengan hasil seperti ini, maka Weighted Round Robin adalah algoritma load balancing yang paling efisien. Algoritma ini menyelesaikan tugas lebih cepat apabila dibandingkan dengan algoritma yang lain.
+
+Untuk hasil dan laporan lebih lengkap mengenai analisis hasil testing masing masing algoritma load balancing dapat dilihat melalui grimoire kelompok kami yang dapat diakses melalui link berikut:
+`https://docs.google.com/document/d/1ZhnPpZgizcKKo7t1i1oUybjh22J1jO-mBT2Hj5OpKWA/edit?usp=sharing`
 
 ## Soal 9
 ### Pertanyaan
@@ -563,9 +560,8 @@ Pertama-tama, setting metode pembagian beban kerja pada load balancer menggunaka
 ```
 ab -n 100 -c 10 http://granz.channel.e24.com/ 
 ```
-Untuk testing pertama menggunakan 3 worker dan hasilnya adalah sebagai berikut </br>
-Untuk testing kedua, salah satu worker dimatikan, sehingga hanya menyisakan 2 worker yang aktif. Hasil dari menggunakan 2 worker adalah sebagai berikut </br>
-Untuk testing yang ketiga, matikan satu worker lagi. Sehingga hanya 1 worker yang aktif. Hasilnya adalah sebagai berikut
+Untuk hasil dan laporan lebih lengkap mengenai analisis hasil testing masing masing untuk 3 worker, 2 worker, dan 1 worker dapat dilihat melalui grimoire kelompok kami yang dapat diakses melalui link berikut:
+`https://docs.google.com/document/d/1ZhnPpZgizcKKo7t1i1oUybjh22J1jO-mBT2Hj5OpKWA/edit?usp=sharing`
 
 ## Soal 10
 ### Pertanyaan
