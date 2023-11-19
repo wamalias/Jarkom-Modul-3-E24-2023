@@ -73,6 +73,8 @@ echo 'options {
       listen-on-v6 { any; };
 }; ' >/etc/bind/named.conf.options
 ```
+Lakukan uji pada salah satu client terhadap domain `granz.channel.e24.com` & `riegel.canyon.e24.com`
+![1](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/1.jpg)</br>
 
 ## Soal 1
 >Lakukan konfigurasi sesuai dengan peta yang sudah diberikan
@@ -335,7 +337,7 @@ echo 'options {
         listen-on-v6 { any; };
 };' > /etc/bind/named.conf.options
 ```
-berikut hasilnya di salah satu client:
+berikut hasilnya di salah satu client:</br>
 ![4a](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/4a.jpg)</br>
 ![4b](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/4b.jpg)</br>
 
@@ -423,7 +425,13 @@ server {
 }
 ```
 Lakukan uji pada client dengan menjalankan command `lynx 192.218.3.x` untuk setiap PHP Worker.
-![6](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6.jpg)</br>
+Lugner
+![6-lugner](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-lugner.png)</br>
+Linie
+![6-linie](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-linie.png)</br>
+Lawine
+![6-lemme](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/6-lemme.png)</br>
+
 
 
 ## Soal 7
@@ -596,6 +604,9 @@ access_log /var/log/nginx/lb_access.log;
 }
 ' > /etc/nginx/sites-available/lb-jarkom
 ```
+![10-netics](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/10-netics.png)</br>
+![10-password](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/10-password.png)</br>
+![10-end](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/10-end.png)</br>
 
 ## Soal 11
 ### Pertanyaan
@@ -633,6 +644,7 @@ access_log /var/log/nginx/lb_access.log;
 ' > /etc/nginx/sites-available/lb-jarkom
 ```
 Disini kami mencoba memasukkan perintah `lynx 192.218.2.2/its` untuk testing, dan hasilnya adalah sebagai berikut
+![11](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/11.png)</br>
 
 ## Soal 12
 ### Pertanyaan
@@ -675,6 +687,7 @@ access_log /var/log/nginx/lb_access.log;
 }
 ' > /etc/nginx/sites-available/lb-jarkom
 ```
+![12](https://github.com/wamalias/Jarkom-Modul-3-E24-2023/raw/main/image/12.png)</br>
 
 ## Soal 13
 ### Pertanyaan
